@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-// このコンポーネントは純粋にCSSアニメーションで動作するため、JavaScriptは不要です
+// 特にスクリプトは不要
 </script>
 
 <style scoped>
@@ -24,7 +24,7 @@
   /* 地図やヘッダーの下に配置 */
   z-index: 1; 
   
-  /* ベースとなる海のグラデーション (HomeViewからこちらへ移動) */
+  /* 背景のグラデーション (HomeViewからこちらへ移動) */
   background: linear-gradient(to top, #b9daf6, #00255d); 
 }
 
