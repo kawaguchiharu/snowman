@@ -7,6 +7,7 @@ import SnowEffect from '../components/Snoweffect.vue'
 import OceanBackground from '../components/oceanbackground.vue'
 import snowmanImg from '/public/snowman.svg'
 
+
 const route = useRoute()
 const router = useRouter()
 
@@ -53,19 +54,14 @@ const currentWeaponNameP1 = ref('')
 const currentWeaponNameP2 = ref('')
 
 // ==========================================
-// 武器リスト (攻撃力は参照されませんが定義は残します)
+// 武器リスト (power をダメージとして使用)
 // ==========================================
 const weaponList = [
-  { name: '人参の鼻', power: 30, icon: '🥕' },
-  { name: '素手', power: 150, icon: '✊' },
-  { name: '雪玉', power: 450, icon: '❄️' },
-  { name: 'バケツ', power: 600, icon: '🪣' },
-  { name: 'つらら', power: 900, icon: '🗡️' },
-  { name: 'スコップ', power: 1500, icon: '🥄' },
-  { name: 'スノーダンプ', power: 3000, icon: '🚜' },
-  { name: '除雪車', power: 7500, icon: '🚛' },
-  { name: '雪崩', power: 15000, icon: '🏔️' },
-  { name: '氷河期', power: 30000, icon: '🥶' } 
+  { name: '弓', power: 1000, icon: '../public/weapon/311747.svg' },
+  { name: '三叉槍', power: 300, icon: '../public/weapon/151565.svg' },
+  { name: '手裏剣', power: 500, icon: '../public/weapon/153172.svg' },
+  { name: '剣', power: 1500, icon: '../public/weapon/310793.svg' },
+  { name: 'ライフル', power: 3000, icon: '../public/weapon/308095.svg' } 
 ]
 
 const detectType = (label) => {
@@ -162,7 +158,7 @@ const startBattleSequence = async () => {
   finishBattle()
 }
 
-// 攻撃ロジック (ダメージを1000に固定)
+// 攻撃ロジック (ダメージを武器の power に変更し、ログに武器名を追加)
 const performAttack = async (attacker) => {
   
   // 決定済みの武器を取得
@@ -179,17 +175,19 @@ const performAttack = async (attacker) => {
 
   await sleep(300) 
 
-  // ★ダメージ計算を固定値 1000 に変更
-  const damage = 1000
+  // 武器の power をダメージとして使用
+  const damage = weapon.power
 
   if (attacker === 1) {
     p2Action.value = 'damage'
     p2Hp.value = Math.max(0, p2Hp.value - damage)
-    logMessage.value = `${p1Data.value.name}の攻撃！ ${damage}ダメージ`
+    // ★ ログメッセージ修正: {都道府県}が{武器名}で攻撃！〇〇ダメージ！
+    logMessage.value = `${p1Data.value.name}が${weapon.name}で攻撃！ ${damage}ダメージ！`
   } else {
     p1Action.value = 'damage'
     p1Hp.value = Math.max(0, p1Hp.value - damage)
-    logMessage.value = `${p2Data.value.name}の攻撃！ ${damage}ダメージ`
+    // ★ ログメッセージ修正: {都道府県}が{武器名}で攻撃！〇〇ダメージ！
+    logMessage.value = `${p2Data.value.name}が${weapon.name}で攻撃！ ${damage}ダメージ！`
   }
 
   await sleep(600)
@@ -284,9 +282,7 @@ const goTop = () => router.push('/')
           :style="{ transform: `scale(${getScale(p1MaxHp)})` }" 
         />
         
-        <div v-if="p1Weapon" class="equipped-weapon p1-weapon-icon">
-          {{ p1Weapon.icon }}
-        </div>
+        <img v-if="p1Weapon" :src="p1Weapon.icon" class="equipped-weapon p1-weapon-icon" alt="Player 1 Weapon" />
       </div>
 
       <div class="player-avatar-area p2" :class="{ 'loser-shake': battleState === 'finished' && winner === 1 }">
@@ -301,9 +297,7 @@ const goTop = () => router.push('/')
           :style="{ transform: `scaleX(-1) scale(${getScale(p2MaxHp)})` }"
         />
 
-        <div v-if="p2Weapon" class="equipped-weapon p2-weapon-icon">
-          {{ p2Weapon.icon }}
-        </div>
+        <img v-if="p2Weapon" :src="p2Weapon.icon" class="equipped-weapon p2-weapon-icon" alt="Player 2 Weapon" />
       </div>
     </div>
 
@@ -468,17 +462,33 @@ const goTop = () => router.push('/')
 .red-pop { background: #ff5252; box-shadow: 0 4px 10px rgba(255, 0, 0, 0.6); }
 .blue-pop { background: #448aff; box-shadow: 0 4px 10px rgba(0, 0, 255, 0.6); }
 
-/* 装備武器アイコン (足元に配置) */
+/* 装備武器アイコン (手元へ配置・拡大) */
 .equipped-weapon {
   position: absolute;
-  font-size: 3rem;
+  /* ★ サイズを拡大 */
+  width: 120px; 
+  height: 100px;
+  object-fit: contain;
   z-index: 30;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
   animation: floatWeapon 2s ease-in-out infinite;
-  bottom: 10px;
+  /* bottom: 10px; は削除 */
 }
-.p1-weapon-icon { right: 10%; } 
-.p2-weapon-icon { left: 10%; } 
+
+/* P1 (左側) 武器の位置調整 */
+.p1-weapon-icon { 
+    right: -1.5%; /* 右端からの距離を調整 */
+    bottom: 175px; /* 地面からの高さを上げて手元へ */
+    transform: rotate(15deg); /* 少し傾ける */
+} 
+
+/* P2 (右側) 武器の位置調整 */
+.p2-weapon-icon { 
+    left: -1.5%; /* 左端からの距離を調整 */
+    bottom: 175px; /* 地面からの高さを上げて手元へ */
+    /* P2は左右反転した雪だるまに合わせて武器も反転し、傾きを逆にする */
+    transform: scaleX(-1) rotate(-15deg); 
+} 
 
 /* =======================================
    バトルログ
