@@ -47,8 +47,21 @@ const handleClick = (pin) => {
   width: 100%;
   height: auto;
   display: block;
-  /* 影をつけて浮遊感を出す */
-  filter: drop-shadow(10px 15px 20px rgba(0,0,0,0.2));
+  
+  /* =======================================
+     ★ 改善点: 立体的な積雪感を出すためのフィルター調整
+     
+     元の影に加えて、明るさ(brightness)とコントラスト(contrast)を強調し、
+     地図の元の陰影（立体的な凹凸）を雪の積もった明るい白として強調します。
+     ======================================= */
+  filter: 
+    drop-shadow(10px 15px 20px rgba(0,0,0,0.2)) /* 既存の影 */
+    brightness(1.4)        /* 大幅に明るくして雪の白さ（積雪）を強調 */
+    contrast(1.4)          /* コントラストを強調し、立体的な濃淡の差を際立たせる */
+    grayscale(0.3)         /* 色味を抑制し、雪景色に近づける */
+    sepia(0.1);            /* わずかにセピアをかけ、冷たい印象を加える */
+  
+  transition: filter 0.5s ease;
 }
 
 .pin-wrapper {

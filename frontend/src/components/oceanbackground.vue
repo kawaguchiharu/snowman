@@ -25,7 +25,7 @@
   z-index: 1; 
   
   /* ベースとなる海のグラデーション (HomeViewからこちらへ移動) */
-  background: linear-gradient(to top, #1e88e5, #0d47a1); 
+  background: linear-gradient(to top, #b9daf6, #00255d); 
 }
 
 /* =======================================
