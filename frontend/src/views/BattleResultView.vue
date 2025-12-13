@@ -57,11 +57,11 @@ const currentWeaponNameP2 = ref('')
 // 武器リスト (power をダメージとして使用)
 // ==========================================
 const weaponList = [
-  { name: '弓', power: 1000, icon: '../public/weapon/311747.svg' },
-  { name: '三叉槍', power: 300, icon: '../public/weapon/151565.svg' },
-  { name: '手裏剣', power: 500, icon: '../public/weapon/153172.svg' },
-  { name: '剣', power: 1500, icon: '../public/weapon/310793.svg' },
-  { name: 'ライフル', power: 3000, icon: '../public/weapon/308095.svg' } 
+  { name: '弓', power: 500, icon: '../public/weapon/311747.svg' },
+  { name: '三叉槍', power: 600, icon: '../public/weapon/151565.svg' },
+  { name: '手裏剣', power: 700, icon: '../public/weapon/153172.svg' },
+  { name: '剣', power: 650, icon: '../public/weapon/310793.svg' },
+  { name: 'ライフル', power: 750, icon: '../public/weapon/308095.svg' } 
 ]
 
 const detectType = (label) => {
