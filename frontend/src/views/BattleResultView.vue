@@ -224,7 +224,6 @@ onMounted(() => {
   startBattleSequence()
 })
 
-const goBackHome = () => router.push('/home')
 const goBackBattle = () => router.push('/battle')
 const goTop = () => router.push('/')
 </script>
@@ -316,7 +315,6 @@ const goTop = () => router.push('/')
 
     <div v-if="battleState === 'finished'" class="action-footer">
       <button @click="goBackBattle" class="retry-btn">⚔️ 再戦する</button>
-      <button @click="goBackHome" class="home-btn">🗺️ 地図へ</button>
       <button @click="goTop" class="top-btn">🏠 TOP</button>
     </div>
 
@@ -381,7 +379,7 @@ const goTop = () => router.push('/')
 .hp-bar-container {
   width: 100%; height: 25px;
   background: #444; border-radius: 5px; overflow: hidden;
-  border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.5); flex: 0 0 10px; height: 25px; max-height: 25px;
 }
 .hp-bar-fill { height: 100%; transition: width 0.3s ease-out; }
 .red { background: linear-gradient(to right, #ff5252, #d50000); }
@@ -534,12 +532,11 @@ const goTop = () => router.push('/')
   box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
 }
 button { 
-  padding: 10px 20px; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; 
+  padding: 20px 35px; font-size: 1.2rem; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; 
   box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s; 
 }
 button:hover { transform: translateY(-3px); }
 .retry-btn { background: #ff9800; color: white; }
-.home-btn { background: #03a9f4; color: white; }
 .top-btn { background: #fff; color: #555; }
 
 
