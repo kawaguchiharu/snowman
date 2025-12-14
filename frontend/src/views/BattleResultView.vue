@@ -4,7 +4,6 @@ import { useRoute, useRouter } from 'vue-router'
 
 // 共通コンポーネント
 import SnowEffect from '../components/Snoweffect.vue'
-import OceanBackground from '../components/oceanbackground.vue'
 import snowmanImg from '/snowman.svg'
 
 const route = useRoute()
@@ -61,7 +60,7 @@ const currentWeaponNameP2 = ref('')
 // ※パスは public フォルダからの絶対パスにしています
 // ==========================================
 const weaponList = [
-  { name: '弓', power: 750, icon: '/weapon/311747.svg', sfx: '/BGM/47042.mp3' },
+  { name: '弓', power: 750, icon: '/weapon/311747.svg', sfx: '/BGM/311747.mp3' },
   { name: '三叉槍', power: 300, icon: '/weapon/151565.svg', sfx: '/BGM/151565.mp3' },
   { name: '手裏剣', power: 500, icon: '/weapon/153172.svg', sfx: '/BGM/153172.mp3' },
   { name: '剣', power: 1000, icon: '/weapon/310793.svg', sfx: '/BGM/310793.mp3' },
