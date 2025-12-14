@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import SnowmanSvg from '../components/snowmansvg.vue'
+import SnowmanSvg from '../components/SnowmanSvg.vue'
 import CityBackground from '../components/citybackground.vue'
 import ComparisonObject from '../components/compar.vue'
 
@@ -78,7 +78,9 @@ const closestComparison = computed(() => {
   })
 })
 
-const goBack = () => router.push('/')
+const goBack = () => router.push('/home')
+const goTop = () => router.push('/')
+
 </script>
 
 <template>
@@ -180,6 +182,7 @@ const goBack = () => router.push('/')
       </div>
 
       <button class="back-btn" @click="goBack">もう一度作る</button>
+      <button @click="goTop" class="top-btn">🏠 TOP</button>
     </div>
   </div>
 </template>

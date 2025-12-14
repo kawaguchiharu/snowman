@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue' // ★ watch を追加
 import { useRoute, useRouter } from 'vue-router'
 
 // 共通コンポーネント
@@ -7,9 +7,12 @@ import SnowEffect from '../components/Snoweffect.vue'
 import OceanBackground from '../components/oceanbackground.vue'
 import snowmanImg from '/public/snowman.svg'
 
-
 const route = useRoute()
 const router = useRouter()
+
+// ★ オーディオプレイヤーの参照を定義
+const bgmPlayer = ref(null)
+const sfxPlayer = ref(null) // 武器効果音は共通のプレイヤーを使うため、一つでOK
 
 // パラメータ取得
 const p1Data = computed(() => ({
@@ -55,13 +58,14 @@ const currentWeaponNameP2 = ref('')
 
 // ==========================================
 // 武器リスト (power をダメージとして使用)
+// ★ sfx プロパティを追加 (パスは /public/audio/ 以下を想定)
 // ==========================================
 const weaponList = [
-  { name: '弓', power: 500, icon: '../public/weapon/311747.svg' },
-  { name: '三叉槍', power: 600, icon: '../public/weapon/151565.svg' },
-  { name: '手裏剣', power: 700, icon: '../public/weapon/153172.svg' },
-  { name: '剣', power: 650, icon: '../public/weapon/310793.svg' },
-  { name: 'ライフル', power: 750, icon: '../public/weapon/308095.svg' } 
+  { name: '弓', power: 500, icon: '../public/weapon/311747.svg', sfx: '../BGM/47042.mp3' }, // 47042.svg に対応
+  { name: '三叉槍', power: 600, icon: '../public/weapon/151565.svg', sfx: '../BGM/151565.mp3' },
+  { name: '手裏剣', power: 700, icon: '../public/weapon/153172.svg', sfx: '../BGM/153172.mp3' },
+  { name: '剣', power: 650, icon: '../public/weapon/310793.svg', sfx: '../BGM/310793.mp3' },
+  { name: 'ライフル', power: 750, icon: '../public/weapon/308095.svg', sfx: '../BGM/308095.mp3' } 
 ]
 
 const detectType = (label) => {
@@ -72,6 +76,7 @@ const detectType = (label) => {
 
 // API連携
 const fetchSnowData = async (playerData) => {
+// ... (中略：API連携ロジックは変更なし) ...
   try {
     const type = detectType(playerData.label)
 
@@ -144,7 +149,15 @@ const startBattleSequence = async () => {
   await sleep(1500) // 武器決定のログを見せる時間
 
   battleState.value = 'fighting'
-  logMessage.value = 'BATTLE START!'
+  logMessage.value = 'BATTLE START!' // ← ログが「BATTLE START!」になった瞬間
+
+  // ★修正：BGM再生をこの直後に実行
+  if (bgmPlayer.value) {
+    // ボリュームを50%に設定（音量調整の例）
+    bgmPlayer.value.volume = 0.5; 
+    bgmPlayer.value.play().catch(e => console.warn("BGM autoplay was prevented:", e));
+  }
+  // ★------------------------------------
 
   while (p1Hp.value > 0 && p2Hp.value > 0) {
     const isP1Turn = Math.random() > 0.5
@@ -174,6 +187,14 @@ const performAttack = async (attacker) => {
   }
 
   await sleep(300) 
+  
+  // ★ 効果音の再生ロジックを追加
+  if (sfxPlayer.value && weapon.sfx) {
+      // 効果音ファイルのパスを動的に設定
+      sfxPlayer.value.src = weapon.sfx;
+      sfxPlayer.value.load(); // 読み込み
+      sfxPlayer.value.play().catch(e => console.warn("SFX playback failed:", e));
+  }
 
   // 武器の power をダメージとして使用
   const damage = weapon.power
@@ -199,6 +220,13 @@ const performAttack = async (attacker) => {
 
 const finishBattle = () => {
   battleState.value = 'finished'
+  
+  // ★ BGM停止
+  if (bgmPlayer.value) {
+    bgmPlayer.value.pause()
+    bgmPlayer.value.currentTime = 0;
+  }
+
   if (p1Hp.value <= 0 && p2Hp.value <= 0) {
     winner.value = 0 // 引き分け
     logMessage.value = '相打ち（引き分け）'
@@ -230,6 +258,9 @@ const goTop = () => router.push('/')
 
 <template>
   <SnowEffect />
+
+  <audio ref="bgmPlayer" src="../BGM/BattleBGM.mp3" loop></audio>
+  <audio ref="sfxPlayer" src=""></audio>
   
   <div class="battle-result-container">
     <OceanBackground />
