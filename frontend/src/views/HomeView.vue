@@ -2,18 +2,16 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-// 外部コンポーネントのインポート
-// ファイルパスは実際のプロジェクト構成に合わせて適宜調整してください
+// 外部コンポーネント
 import JapanMap3D from '../components/japanmap_3D.vue'
 import SmartCalendar from '../components/calendar.vue'
 import SnowEffect from '../components/Snoweffect.vue'
 import OceanBackground from '../components/oceanbackground.vue'
 
-const router = useRouter() // ページ移動用
+const router = useRouter() 
 
 const selectedPref = ref(null)
 const showModal = ref(false)
-// 初期日付（必要に応じて変更してください）
 const targetDate = ref(new Date('2024-01-01'))
 
 // 地図クリック
@@ -43,6 +41,11 @@ const handleSearch = (type) => {
     }
   })
 }
+
+// TOPに戻る
+const goBack = () => {
+  router.push('/')
+}
 </script>
 
 <template>
@@ -51,8 +54,12 @@ const handleSearch = (type) => {
   <div class="home-container">
     <OceanBackground />
 
+    <button class="back-btn" @click="goBack">
+      ⬅ TOP
+    </button>
+
     <header>
-      <h1>⛄ 雪だるまシミュレーター</h1>
+      <h1>❄️ 雪だるまシミュレーションモード</h1>
       <p>地図のピンをクリックしてね！</p>
     </header>
 
@@ -63,10 +70,11 @@ const handleSearch = (type) => {
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content">
         <button class="close-btn" @click="closeModal">×</button>
+        
         <div class="modal-header">
           <h2>📍 {{ selectedPref.name }}</h2>
+          <p class="guide-text">シミュレーションする日付を選んでください👇</p>
         </div>
-        <p class="guide-text">クリックすると結果画面へ移動します👇</p>
         
         <div class="calendar-wrapper">
           <SmartCalendar 
@@ -82,33 +90,50 @@ const handleSearch = (type) => {
 
 <style scoped>
 /* =======================================
+   バックボタン
+   ======================================= */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+  padding: 15px 30px; /* 大きくしました */
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-size: 1.2rem; /* 大きくしました */
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateX(-3px);
+}
+
+/* =======================================
    ホーム画面全体のスタイル
    ======================================= */
 .home-container {
   text-align: center;
   padding-bottom: 50px;
-  /* 海背景を表示するために高さ確保と相対配置を設定 */
   min-height: 100vh;
   position: relative; 
   z-index: 10;
-  /* 文字色を背景に合わせて調整 */
   color: #e3f2fd;
-  overflow: hidden; /* 波がはみ出さないように */
+  overflow: hidden; 
 }
 
-/* =======================================
-   Main (地図エリア)
-   OceanBackground(z-index:1) より手前に配置し、
-   地図がクリック可能であることを保証する
-   ======================================= */
 main {
   position: relative;
   z-index: 5; 
 }
 
-/* =======================================
-   ヘッダー
-   ======================================= */
 header {
   margin-bottom: 20px;
   margin-top: 20px;
@@ -117,13 +142,12 @@ header {
 }
 
 h1 {
-  /* 濃い青背景でも見える明るい色に変更 */
   color: #bbdefb;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* =======================================
-   モーダル
+   モーダルのスタイル (BattleViewに合わせました)
    ======================================= */
 .modal-overlay {
   position: fixed; 
@@ -131,51 +155,46 @@ h1 {
   width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.7);
   display: flex; justify-content: center; align-items: center;
-  /* 雪(9000)よりは下だが、他の要素より上 */
   z-index: 3000;
   animation: fadeIn 0.3s;
 }
 
 .modal-content {
-  /* 海背景に合う少し明るい青系の白、または白 */
-  background: #f0f8ff; 
+  /* 背景を白に変更 */
+  background: #fff; 
+  color: #333;
   padding: 25px;
   border-radius: 20px;
   width: 95%; max-width: 500px;
   position: relative;
   animation: popUp 0.4s;
+  /* 影などの調整 */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  color: #333; /* モーダル内の文字色は読みやすく黒系に戻す */
 }
 
 .close-btn {
   position: absolute; top: 15px; right: 20px;
   background: none; border: none;
   font-size: 2rem;
-  color: #1a237e;
+  color: #555; /* 色を少し濃く */
   cursor: pointer;
 }
 
 .modal-header { 
-  text-align: center; 
-  margin-bottom: 15px; 
+  margin-bottom: 20px; 
 }
-
-.modal-header h2 {
-  color: #1a237e;
-  margin: 0;
+.modal-header h2 { 
+  margin: 0; 
+  color: #1565c0; 
 }
-
-.guide-text {
-  font-size: 0.9rem;
-  color: #1565c0;
-  margin-bottom: 15px;
+.guide-text { 
+  margin-top: 5px; 
+  font-weight: bold;
+  color: #666;
 }
 
 .calendar-wrapper { 
-  display: flex; 
-  justify-content: center; 
-  margin-bottom: 20px; 
+  margin-bottom: 10px; 
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
